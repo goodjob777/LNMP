@@ -1,0 +1,52 @@
+https://linuxconfig.org/how-to-create-a-docker-based-lamp-stack-using-docker-on-ubuntu-20-04
+
+version: '3.7'
+
+services:
+    php-httpd:
+        image: 7.4-fpm
+        restart: unless-stopped
+        ports:
+            - 80:80
+        volumes:
+            - ./web/wwwhtml:/var/www/html
+
+ nginx:
+    image: nginx:latest
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - 80:80
+    volumes:
+      - ./web/nginx/conf.d:/etc/nginx/conf.d
+      - ./web/projects:/my_projects
+    environment:
+      - TZ=Asia/Taipei
+
+    mariadb:
+        image: mariadb:10.3
+        command: --lower_case_table_names=1
+        restart: unless-stopped
+        volumes:
+            - /web/mariadb/etc:/etc/lib/mysql
+            - /web/mariadb/var:/var/lib/mysql
+
+        environment:
+- TZ: Asia/Taipei
+            - MYSQL_ALLOW_EMPTY_PASSWORD: "no"
+            - MYSQL_ROOT_PASSWORD: "webdb57081805"
+            - MYSQL_USER: 'webuser'
+            - MYSQL_PASSWORD: 'webdb5708
+            - MYSQL_DATABASE: 'testdb'
+
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        restart: unless-stopped
+        links:
+            - 'mariadb:db'
+        ports:
+            - 8081:80
+
+volumes:
+ - /web/mariadb/etc           
+ - /web/mariadb/va
